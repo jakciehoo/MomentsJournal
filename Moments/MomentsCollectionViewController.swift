@@ -276,32 +276,100 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
         backButton.alpha = 0
         self.view.addSubview(backButton)
         
-        //Create share button to allow user to post selected image to Facebook or weibo,twitter
-        let shareButton = UIButton(frame: CGRectMake(self.view.frame.size.width-70, 20, 60, 25))
-        shareButton.tag = 305
-        shareButton.setTitle("Share", forState: .Normal)
-        shareButton.layer.cornerRadius = 10
-        shareButton.clipsToBounds = true
-        shareButton.contentVerticalAlignment = .Bottom
-        shareButton.contentHorizontalAlignment = .Center
-        shareButton.layer.borderWidth = 1.0
-        shareButton.layer.borderColor = UIColor.whiteColor().CGColor
-        shareButton.titleLabel?.font = UIFont(name: "Avenir", size: 17.0)
-        shareButton.backgroundColor = UIColor(red: 0.627, green: 0.569, blue: 0.929, alpha: 1)
-        shareButton.titleLabel?.textColor = UIColor.whiteColor()
-        shareButton.addTarget(self, action: "configureSocial:", forControlEvents: .TouchUpInside)
-        shareButton.alpha = 0
-        self.view.addSubview(shareButton)
+//        //Create share button to allow user to post selected image to Facebook or weibo,twitter
+//        let shareButton = UIButton(frame: CGRectMake(self.view.frame.size.width-120, 20, 60, 25))
+//        shareButton.tag = 305
+//        shareButton.setTitle("Share", forState: .Normal)
+//        shareButton.layer.cornerRadius = 10
+//        shareButton.clipsToBounds = true
+//        shareButton.contentVerticalAlignment = .Bottom
+//        shareButton.contentHorizontalAlignment = .Center
+//        shareButton.layer.borderWidth = 1.0
+//        shareButton.layer.borderColor = UIColor.whiteColor().CGColor
+//        shareButton.titleLabel?.font = UIFont(name: "Avenir", size: 17.0)
+//        shareButton.backgroundColor = UIColor(red: 0.627, green: 0.569, blue: 0.929, alpha: 1)
+//        shareButton.titleLabel?.textColor = UIColor.whiteColor()
+//        shareButton.addTarget(self, action: "sendImage", forControlEvents: .TouchUpInside)
+//        shareButton.alpha = 0
+//        self.view.addSubview(shareButton)
+        
+        //create a down menu Button
+        var homeView = self.createHomeButtonView()
+        
+        var downMenuButton = DWBubbleMenuButton(frame: CGRectMake(self.view.frame.size.width-50,
+            20,
+            homeView.frame.size.width,
+            homeView.frame.size.height), expansionDirection: ExpansionDirection.DirectionDown)
+        downMenuButton.homeButtonView = homeView;
+        //downMenuButton.addButtons(self.createDemoButtonArray())
+        downMenuButton.tag = 306
+        let weixinButton = createButtonWithName("weixin")
+        weixinButton.addTarget(self, action: Selector("weixinButtonTap:"), forControlEvents: UIControlEvents.TouchUpInside)
+        downMenuButton.addButton(weixinButton)
+        let weiboButton = createButtonWithName("sinaminiblog")
+        weiboButton.addTarget(self, action: Selector("weiboButtonTap:"), forControlEvents: UIControlEvents.TouchUpInside)
+        downMenuButton.addButton(weiboButton)
+        let qzoneButton = createButtonWithName("qzone")
+        qzoneButton.addTarget(self, action: Selector("qzoneButtonTap:"), forControlEvents: UIControlEvents.TouchUpInside)
+        downMenuButton.addButton(qzoneButton)
+        let neteaseButton = createButtonWithName("neteasemb")
+        neteaseButton.addTarget(self, action: Selector("neteasembButtonTap:"), forControlEvents: UIControlEvents.TouchUpInside)
+        downMenuButton.addButton(neteaseButton)
+        let photoButton = createButtonWithName("photo")
+        photoButton.addTarget(self, action: Selector("photoButtonTap:"), forControlEvents: UIControlEvents.TouchUpInside)
+        downMenuButton.addButton(photoButton)
+        downMenuButton.alpha = 0
+        self.view.addSubview(downMenuButton)
+        
         
         UIView.animateWithDuration(0.3, animations: {
             zoomImageView.frame = zoomFrameTo
             zoomImageView.alpha = 1
             backButton.alpha = 1
-            shareButton.alpha = 1
+            //shareButton.alpha = 1
+            downMenuButton.alpha = 1
         })
         
         self.zoomFrame = zoomFrameFrom
     }
+    
+    
+    func createHomeButtonView() -> UIImageView {
+        
+        let imageView = UIImageView(frame: CGRectMake(0, 0, 40, 40))
+        imageView.image = UIImage(named: "share")
+        return imageView
+    }
+    
+    func createButtonWithName(imageName:NSString) -> UIButton {
+        var button = UIButton()
+        
+        button.setImage(UIImage(named: imageName), forState: UIControlState.Normal)
+        button.sizeToFit()
+        
+        
+        return button
+        
+    }
+    
+    func buttonTap(sender:UIButton){
+        
+        println("Button tapped, tag:\(sender.tag)")
+    }
+    func photoButtonTap(sender:UIButton){
+        UIImageWriteToSavedPhotosAlbum(self.zoomImage, nil, nil, nil)
+        let alert = UIAlertView(title: "", message: "Saved the wonderful photo sucessfully", delegate: self, cancelButtonTitle: "ok")
+        alert.show()
+    }
+    
+    func qzoneButtonTap(sender:UIButton){
+        println("qzoneButtonTap")
+
+    }
+    func neteasembButtonTap(sender:UIButton){
+        println("neteasembButtonTap")
+    }
+    
     func dismissCell(sender:UIButton){
         println("Button pressed target action: dismiss selected cell")
         self.zoomFromSelectedImage(self.zoomFrame)
@@ -320,19 +388,106 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
                 cv.hidden = false
                 let backButton = self.view.viewWithTag(304)
                 backButton?.removeFromSuperview()
-                let shareButton = self.view.viewWithTag(305)
-                shareButton?.removeFromSuperview()
+                //let shareButton = self.view.viewWithTag(305)
+                //shareButton?.removeFromSuperview()
+                let downMenuButton = self.view.viewWithTag(306)
+                downMenuButton?.removeFromSuperview()
                 self.zoomImage = nil
         })
     }
-    func configureSocial(sender:UIButton){
+    func weiboButtonTap(sender:UIButton){
         let socialController = SLComposeViewController(forServiceType: SLServiceTypeSinaWeibo)
         
-        socialController.setInitialText("Check out my daily moment!")
+        socialController.setInitialText("Share my daily wonderful moment!")
         socialController.addImage(self.zoomImage)
         self.presentViewController(socialController, animated: true, completion: nil)
+  
+    }
+    func weixinButtonTap(sender:UIButton){
+        sendImageContext(self.zoomImage)
+    }
+    //发送图片信息方法实现
+    func sendImageContext(image :UIImage) {
+        let messgage = WXMediaMessage()
+        let wxImageObject = WXImageObject()
+        let thumbSize = CGSize(width: 30, height: 30)
+        let thumbImage = imageByScalingAndCroppingForSize(image,targetSize: thumbSize)
+        let thumbData = UIImagePNGRepresentation(thumbImage)
+        messgage.setThumbImage(thumbImage)
         
+        wxImageObject.imageData = UIImagePNGRepresentation(image)
+        
+        println(thumbData.length/1024)
+        messgage.mediaObject = wxImageObject
+        messgage.mediaTagName = "test"
+        messgage.messageExt = "测试"
+        messgage.messageAction = "<action>totallist<action>"
+        let sendMessage = SendMessageToWXReq()
+        sendMessage.bText = false
+        sendMessage.message = messgage
+        sendMessage.scene = 1
+        WXApi.sendReq(sendMessage)
         
     }
+    
+    //发送信息给用户
+    func sendText(){
+        var req = SendMessageToWXReq()
+        req.text = "test to send message to a friend"
+        req.scene = 1
+        req.bText = true
+        WXApi.sendReq(req)
+    }
+    // 压缩图片大小
+    func scaleImageToSize(image:UIImage,size:CGSize)->UIImage {
+        UIGraphicsBeginImageContext(size)
+        image.drawInRect(CGRectMake(0, 0, size.width, size.height))
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return scaledImage
+    }
+    //裁剪图片
+    func imageByScalingAndCroppingForSize(image:UIImage,targetSize:CGSize)->UIImage{
+        let imageSize = image.size
+        let width = imageSize.width
+        let height = imageSize.height
+        let targetWidth = targetSize.width
+        let targetHeight = targetSize.height
+        var scaleFactor:CGFloat = 0.0
+        var scaleWidth = targetWidth
+        var scaleHeight = targetHeight
+        var thumbnailPoint = CGPointMake(0.0, 0.0)
+        if (CGSizeEqualToSize(imageSize, targetSize) == false){
+            
+            let widthFactor = targetWidth/width
+            let heightFactor = targetHeight/height
+            if(widthFactor > heightFactor){
+                scaleFactor = widthFactor
+            }else{
+                scaleFactor = heightFactor
+            }
+            
+            scaleWidth = width * scaleFactor
+            scaleHeight = heightFactor * scaleFactor
+            
+            //center of the image
+            if(widthFactor > heightFactor){
+                thumbnailPoint.y = (targetHeight - scaleHeight) * 0.5
+            }else if (widthFactor < heightFactor) {
+                thumbnailPoint.x = (targetHeight - scaleHeight) * 0.5
+            }
+        }
+        
+        UIGraphicsBeginImageContext(targetSize)
+        image.drawInRect(CGRectMake(thumbnailPoint.x, thumbnailPoint.y, targetSize.width, targetSize.height))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        if (newImage != nil){
+            UIGraphicsEndImageContext()
+        }
+        return newImage
+        
+    }
+
+    
 }
 

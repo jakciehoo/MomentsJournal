@@ -4,3 +4,6 @@
 
 //#import <BROptionsButton/BROptionItem.h>
 #import "OnboardingViewController.h"
+#import "WXApi.h"
+#import "WXApiObject.h"
+#import "ShareSDK/ShareSDK.h"
