@@ -41,14 +41,14 @@ class FilterImageViewController: UIViewController {
         self.imageView.image = self.imageFullSize
         
         for i in 0..<self.filters.count{
-            println("Creating thumnail for \(self.filters[i]) filter")
+            print("Creating thumnail for \(self.filters[i]) filter")
             //create raw CIImage
             let rawThumbnailData = CIImage(image: self.imageThumbnail)
             let filter = CIFilter(name: self.filters[i])
-            filter.setDefaults()
+            filter!.setDefaults()
             //set raw CIImage as input image
-            filter.setValue(rawThumbnailData, forKey: "inputImage")
-            let filterThumbnailData = filter.valueForKey("outputImage") as CIImage
+            filter!.setValue(rawThumbnailData, forKey: "inputImage")
+            let filterThumbnailData = filter!.valueForKey("outputImage") as! CIImage
             let filterThumbnail = UIImage(CIImage: filterThumbnailData)
             let filterButton = UIButton(frame: CGRect(x: 100*i + 4*i, y: 0, width: 100, height: 100))
             filterButton.tag = i+100
@@ -64,7 +64,7 @@ class FilterImageViewController: UIViewController {
             filterLabel.backgroundColor = UIColor.clearColor()
             filterLabel.textColor = UIColor.lightGrayColor()
             self.filterScrollView.addSubview(filterLabel)
-            println("Adding UIButton add UILabel to scroll view")
+            print("Adding UIButton add UILabel to scroll view")
         }
     }
 
@@ -75,7 +75,7 @@ class FilterImageViewController: UIViewController {
     
     //Resize an image
     func imageWithImage(image:UIImage,newSize:CGSize) -> UIImage{
-        println("Resizing the image")
+        print("Resizing the image")
         UIGraphicsBeginImageContext(newSize)
         image.drawInRect(CGRectMake(0, 0, newSize.width, newSize.height))
         let newImage = UIGraphicsGetImageFromCurrentImageContext()
@@ -85,7 +85,7 @@ class FilterImageViewController: UIViewController {
     }
     @IBAction func chooseFilter(sender:UIButton){
         let chosenFilterIndex = sender.tag - 100
-        println("chose \(filters[chosenFilterIndex])")
+        print("chose \(filters[chosenFilterIndex])")
         //if a user double taps a filter preview, them remove the fitler
         if(self.prevChosenFilterIndex == chosenFilterIndex && !self.doubleTapped){
             self.doubleTapped = true
@@ -107,9 +107,9 @@ class FilterImageViewController: UIViewController {
             
             let rawImageData = CIImage(image: self.imageFullSize)
             let filter = CIFilter(name: self.filters[chosenFilterIndex])
-            filter.setDefaults()
-            filter.setValue(rawImageData, forKey: "inputImage")
-            let filterImgData = filter.valueForKey("outputImage") as CIImage
+            filter!.setDefaults()
+            filter!.setValue(rawImageData, forKey: "inputImage")
+            let filterImgData = filter!.valueForKey("outputImage") as! CIImage
             let filterImg = UIImage(CIImage: filterImgData)
             self.imageView.image = filterImg
             
@@ -122,13 +122,13 @@ class FilterImageViewController: UIViewController {
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if(segue.identifier == "addText"){
-            println("Performing addText segue")
+            print("Performing addText segue")
             //replace image with filtered image in Moment object
             self.moment.image = self.imageView.image!
             
             
             //pass updated Moment object with filtered image to Text Effects View Controller
-            let TextViewController = segue.destinationViewController as TextEffectsViewController
+            let TextViewController = segue.destinationViewController as! TextEffectsViewController
             TextViewController.moment = self.moment
         }
         

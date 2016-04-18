@@ -50,7 +50,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate,UIImagePickerCont
     func showTabBar(){
         let tabBar = self.tabBarController!.tabBar
         if tabBar.hidden {
-            UIView.animateWithDuration(1, delay: 0, options: nil, animations: {
+            UIView.animateWithDuration(1, delay: 0, options: [], animations: {
                 tabBar.hidden = false
                 tabBar.frame = CGRect(x: tabBar.frame.origin.x, y: tabBar.frame.origin.y-49, width: tabBar.frame.size.width, height: tabBar.frame.size.height)
                 
@@ -60,7 +60,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate,UIImagePickerCont
                     
             })
         }else {
-            UIView.animateWithDuration(1, delay: 0, options: nil, animations: {
+            UIView.animateWithDuration(1, delay: 0, options: [], animations: {
                 
                 tabBar.frame = CGRect(x: tabBar.frame.origin.x, y: tabBar.frame.origin.y + 49, width: tabBar.frame.size.width, height: tabBar.frame.size.height)
                 
@@ -83,7 +83,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate,UIImagePickerCont
         self.placeholderArray.addObject("Little things count too!")
         self.placeholderArray.addObject("What made you happy today?")
         let index = Int(arc4random_uniform(UInt32(self.placeholderArray.count)))
-        let placehloderText = self.placeholderArray.objectAtIndex(index) as String
+        let placehloderText = self.placeholderArray.objectAtIndex(index) as! String
         self.dailyQuestion.placeholder = placehloderText
         self.dailyQuestion.delegate = self
         
@@ -123,13 +123,13 @@ class HomeViewController: UIViewController,UITextFieldDelegate,UIImagePickerCont
     if(segue.identifier == "showMoments"){
         NSLog("Peform showMoments segue")
         let defaults = NSUserDefaults.standardUserDefaults()
-        let mvc = segue.destinationViewController as MomentsCollectionViewController
-        mvc.savedMoments = defaults.objectForKey("moments") as [Moment]
+        let mvc = segue.destinationViewController as! MomentsCollectionViewController
+        mvc.savedMoments = defaults.objectForKey("moments") as! [Moment]
         
     }else if(segue.identifier == "showFilters"){
         NSLog("Performing showFilters segue")
-        let navigationController = segue.destinationViewController as UINavigationController
-        let fvc = navigationController.topViewController  as FilterImageViewController
+        let navigationController = segue.destinationViewController as! UINavigationController
+        let fvc = navigationController.topViewController  as! FilterImageViewController
         fvc.moment = self.moment
     }
         
@@ -137,7 +137,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate,UIImagePickerCont
     
     //MARK - Saving Moments
     func resetNSUserDefaults() {
-        var defaultsDictionary = NSUserDefaults.standardUserDefaults().dictionaryRepresentation()
+        let defaultsDictionary = NSUserDefaults.standardUserDefaults().dictionaryRepresentation()
         
        // defaultsDictionary.
 //        let keys = defaultsDictionary.keys as [String]
@@ -146,7 +146,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate,UIImagePickerCont
 //
 //        }
         for (key,value) in defaultsDictionary {
-            println(key)
+            print(key)
             NSUserDefaults.standardUserDefaults().removeObjectForKey(key as String)
             
         }
@@ -156,7 +156,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate,UIImagePickerCont
     //MARK - Target Action
     
     @IBAction func presentInfo(sender:UIButton){
-        println("Button pressed target action: present info")
+        print("Button pressed target action: present info")
         if(self.infoView.hidden){
             self.infoView.alpha = 0
             self.infoView.hidden = false
@@ -168,7 +168,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate,UIImagePickerCont
     //Upon info view button click, dismiss the info view.
     @IBAction func dismissInfo(sender:UIButton){
         
-        println("Button pressed target action: dismiss info")
+        print("Button pressed target action: dismiss info")
         UIView .animateWithDuration(0.5, animations: {
             self.infoView.alpha = 0
             
@@ -179,24 +179,24 @@ class HomeViewController: UIViewController,UITextFieldDelegate,UIImagePickerCont
         
     }
     @IBAction func loadImagePicker(sender:UIButton){
-        println("Button pressed target action:load image picker")
+        print("Button pressed target action:load image picker")
         let picker = UIImagePickerController()
         picker.modalPresentationStyle = .CurrentContext
         picker.delegate = self
         picker.allowsEditing = true
         if(UIImagePickerController.isSourceTypeAvailable(.SavedPhotosAlbum)){
             picker.sourceType = .SavedPhotosAlbum
-            println("show image picker:photo gallery available")
+            print("show image picker:photo gallery available")
             
         }
         self.presentViewController(picker, animated: true, completion: nil)
         
     }
     //Once user has chosen an image, crop the image to a square if they have not done so already.
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
-        println("Did finish picking image")
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        print("Did finish picking image")
         
-        let chosenImage = (info as NSDictionary).objectForKey(UIImagePickerControllerEditedImage) as UIImage
+        let chosenImage = (info as NSDictionary).objectForKey(UIImagePickerControllerEditedImage) as! UIImage
         if(chosenImage.size.height != chosenImage.size.width){
             let imageSize = chosenImage.size
             let width = imageSize.width
@@ -212,7 +212,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate,UIImagePickerCont
         }
         picker.dismissViewControllerAnimated(true, completion: {
             let todayMoment:Moment = Moment()
-            todayMoment.text = self.dailyQuestion.text
+            todayMoment.text = self.dailyQuestion.text!
             let dateformatter = NSDateFormatter()
             dateformatter.dateFormat = "yyyy-mm-dd"
             dateformatter.dateStyle = .ShortStyle
@@ -220,10 +220,10 @@ class HomeViewController: UIViewController,UITextFieldDelegate,UIImagePickerCont
             todayMoment.date = todayDate
             todayMoment.image = chosenImage
             self.moment = todayMoment
-            println(self.moment.text)
+            print(self.moment.text)
             self.performSegueWithIdentifier("showFilters", sender: self)
         })
-        println("Dismissed image picker")
+        print("Dismissed image picker")
     }
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         picker.dismissViewControllerAnimated(true, completion: nil)
@@ -237,8 +237,10 @@ class HomeViewController: UIViewController,UITextFieldDelegate,UIImagePickerCont
         textField.resignFirstResponder()
         return true
     }
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+    
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.dailyQuestion.resignFirstResponder()
+
     }
 
 

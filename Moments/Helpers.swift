@@ -55,9 +55,9 @@ extension UIImage {
 // http://codewithchris.com/common-mistakes-with-adding-custom-fonts-to-your-ios-app/
 func listAllAvailableFonts() {
     for family: AnyObject in UIFont.familyNames() {
-        println("\(family)")
-        for font: AnyObject in UIFont.fontNamesForFamilyName(family as NSString) {
-            println(" \(font)")
+        print("\(family)")
+        for font: AnyObject in UIFont.fontNamesForFamilyName(family as! NSString as String) {
+            print(" \(font)")
         }
     }
 }

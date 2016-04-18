@@ -29,7 +29,7 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
         
         //if we arrived at this view controller form the submitMoment segue, add the new moment to saved moments
         if(self.moment != nil){
-            println("Adding submitted moment to user defaults")
+            print("Adding submitted moment to user defaults")
             self.navigationItem.hidesBackButton = true
             self.navigationItem.title = "Moments"
             self.addMomentToDefaults();
@@ -50,7 +50,7 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
     func loadingSavedMoments(){
         let defaults = NSUserDefaults.standardUserDefaults()
         if let dataMoments = defaults.objectForKey("moments") as? NSData {
-            self.savedMoments = NSKeyedUnarchiver.unarchiveObjectWithData(dataMoments) as [Moment]
+            self.savedMoments = NSKeyedUnarchiver.unarchiveObjectWithData(dataMoments) as! [Moment]
         }
     }
     //MARK: - NSUserDefaults
@@ -64,7 +64,7 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
             //let mutableArray = NSMutableArray()
             if  let defaultMoment = defaults.objectForKey("moments") as? NSArray{
                 //self.savedMoments = defaultMoment
-                tempMoments = defaultMoment.mutableCopy() as NSMutableArray
+                tempMoments = defaultMoment.mutableCopy() as! NSMutableArray
             }
             //let defaultsArray = defaults.objectForKey("moments") as NSArray
             tempMoments.insertObject(momentData, atIndex: 0)
@@ -73,18 +73,18 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
             defaults.synchronize()
             self.collectionView?.reloadData()
             self.moment = nil
-            println("Finished adding new moment to defaults")
+            print("Finished adding new moment to defaults")
         }
     }
     //refresh the data
     func refreshCollection(){
         
-        println("Pull to refresh")
+        print("Pull to refresh")
         let defaults = NSUserDefaults.standardUserDefaults();
         if  let defaultMoment = defaults.objectForKey("moments") as? NSArray{
             self.savedMoments = defaultMoment
         }
-        let refreshControl = view.viewWithTag(303) as UIRefreshControl
+        let refreshControl = view.viewWithTag(303) as! UIRefreshControl
         refreshControl.endRefreshing()
         self.collectionView?.reloadData()
     }
@@ -97,7 +97,7 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
 
     //Present Come Back Tomorrow view after user finished submitting daily moment
     func presentComeBackTomorrow(){
-        println("presenting Come Back Tomorrow View")
+        print("presenting Come Back Tomorrow View")
         let comeBackView = UIView(frame: CGRectMake(self.view.frame.size.width/2 - 100, self.view.frame.size.height/2 - 100, 200, 150))
         comeBackView.backgroundColor = UIColor(red: 0.627, green: 0.569, blue: 0.929, alpha: 1)
         comeBackView.alpha = 0
@@ -151,17 +151,17 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         var edgeInsets:UIEdgeInsets!
         if (UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad){
-            println("Current device is an ipad")
+            print("Current device is an ipad")
             edgeInsets = UIEdgeInsetsMake(50, 50, 50, 50)
             
         }else{
-            println("Current device is an iphone")
+            print("Current device is an iphone")
             let screenBounds = UIScreen.mainScreen().bounds
             if(screenBounds.size.height <= 568){
-                println("This is an iphone4/5/5s")
+                print("This is an iphone4/5/5s")
                 edgeInsets = UIEdgeInsetsMake(30, 15, 30, 15)
             }else if(screenBounds.size.height <= 736){
-                println("This is an iphone6/6 plus")
+                print("This is an iphone6/6 plus")
 
                 edgeInsets = UIEdgeInsetsMake(50, 30, 50, 30)
                 
@@ -173,7 +173,7 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
         return edgeInsets
     }
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize{
-        println("Set the cell size (140,140) ")
+        print("Set the cell size (140,140) ")
         return CGSizeMake(140, 140)
         
     }
@@ -194,11 +194,11 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("momentsCell", forIndexPath: indexPath) as MomentsCollectionViewCell
-        println("Populating collection view cells")
-        let currentMoment = self.savedMoments[indexPath.row] as NSData
-        let currentMomentDecoded = NSKeyedUnarchiver.unarchiveObjectWithData(currentMoment) as Moment
-        println("Decoded moment \(currentMomentDecoded.text)")
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("momentsCell", forIndexPath: indexPath) as! MomentsCollectionViewCell
+        print("Populating collection view cells")
+        let currentMoment = self.savedMoments[indexPath.row] as! NSData
+        let currentMomentDecoded = NSKeyedUnarchiver.unarchiveObjectWithData(currentMoment) as! Moment
+        print("Decoded moment \(currentMomentDecoded.text)")
         cell.cellImageView.contentMode = .ScaleAspectFit
         cell.cellImageView.clipsToBounds = true
         cell.backgroundColor = UIColor.whiteColor()
@@ -226,7 +226,7 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
         navigationController?.setToolbarHidden(false, animated: true)
     }
     func showHomeView(){
-        let tabbar = storyboard?.instantiateViewControllerWithIdentifier("mainViewController") as UITabBarController
+        let tabbar = storyboard?.instantiateViewControllerWithIdentifier("mainViewController") as! UITabBarController
         tabbar.modalPresentationStyle = .OverCurrentContext
         tabbar.modalTransitionStyle = .CoverVertical
         presentViewController(tabbar, animated: true, completion: nil)
@@ -236,12 +236,12 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
 
     
     func zoomToSelectedImage(indexPath:NSIndexPath){
-        println("Zooming to cell image")
+        print("Zooming to cell image")
         
         let defaults = NSUserDefaults.standardUserDefaults()
-        self.savedMoments = defaults.objectForKey("moments") as NSArray
-        let selectedMomentData = self.savedMoments.objectAtIndex(indexPath.row) as NSData
-        let selectedMoment = NSKeyedUnarchiver.unarchiveObjectWithData(selectedMomentData) as Moment
+        self.savedMoments = defaults.objectForKey("moments") as! NSArray
+        let selectedMomentData = self.savedMoments.objectAtIndex(indexPath.row) as! NSData
+        let selectedMoment = NSKeyedUnarchiver.unarchiveObjectWithData(selectedMomentData) as! Moment
         //let selectedMoment = savedMoments[indexPath.row]
         let zoomImageView = UIImageView(image: selectedMoment.image)
         zoomImageView.tag = 302
@@ -250,7 +250,7 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
         
         //Define the end frame fo the zoom
         let zoomFrameTo = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)
-        let cv = self.view.viewWithTag(301) as UICollectionView
+        let cv = self.view.viewWithTag(301) as! UICollectionView
         cv.hidden = true
         
         let cellToZoom = cv.cellForItemAtIndexPath(indexPath)!
@@ -300,7 +300,7 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
             20,
             homeView.frame.size.width,
             homeView.frame.size.height), expansionDirection: ExpansionDirection.DirectionDown)
-        downMenuButton.homeButtonView = homeView;
+        downMenuButton.homeButtonView = homeView
         //downMenuButton.addButtons(self.createDemoButtonArray())
         downMenuButton.tag = 306
         let weixinButton = createButtonWithName("weixin")
@@ -318,6 +318,10 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
         let photoButton = createButtonWithName("photo")
         photoButton.addTarget(self, action: Selector("photoButtonTap:"), forControlEvents: UIControlEvents.TouchUpInside)
         downMenuButton.addButton(photoButton)
+        let shareButton = createButtonWithName("shareMore")
+        shareButton.addTarget(self, action: "shareButtonTap:", forControlEvents: .TouchUpInside)
+        downMenuButton.addButton(shareButton)
+
         downMenuButton.alpha = 0
         self.view.addSubview(downMenuButton)
         
@@ -344,7 +348,7 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
     func createButtonWithName(imageName:NSString) -> UIButton {
         var button = UIButton()
         
-        button.setImage(UIImage(named: imageName), forState: UIControlState.Normal)
+        button.setImage(UIImage(named: imageName as String), forState: UIControlState.Normal)
         button.sizeToFit()
         
         
@@ -352,9 +356,10 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
         
     }
     
-    func buttonTap(sender:UIButton){
+    func qzoneButtonTap(sender:UIButton){
         
-        println("Button tapped, tag:\(sender.tag)")
+        let alert = UIAlertView(title: "", message: "不好意思，这个功能后期版本再添加", delegate: self, cancelButtonTitle: "ok")
+        alert.show()
     }
     func photoButtonTap(sender:UIButton){
         UIImageWriteToSavedPhotosAlbum(self.zoomImage, nil, nil, nil)
@@ -362,16 +367,31 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
         alert.show()
     }
     
-    func qzoneButtonTap(sender:UIButton){
-        println("qzoneButtonTap")
-
+    func shareButtonTap(sender:UIButton){
+        let imageData = UIImagePNGRepresentation(self.zoomImage)
+        let publishContent = ShareSDK.content("输入分享内容", defaultContent: "测试", image: ShareSDK.imageWithData(imageData, fileName: "test", mimeType: "png"), title: "ShareSDK", url: "http://weibo.com/hooyoo", description: "这是一条测试程序", mediaType: SSPublishContentMediaTypeImage)
+        let container = ShareSDK.container()
+        container.setIPadContainerWithView(sender, arrowDirect: UIPopoverArrowDirection.Left)
+        ShareSDK.showShareActionSheet(container, shareList: nil, content: publishContent, statusBarTips: true, authOptions: nil, shareOptions: nil, result: {
+            (type , state , statusInfo , error , end) in
+//            if (state == .Success){
+//                println("分享成功")
+//                
+//            }else if (state == SSResponseStateFail){
+//                println("分享失败")
+//            }
+        })
+        
+        
+        
     }
     func neteasembButtonTap(sender:UIButton){
-        println("neteasembButtonTap")
+        let alert = UIAlertView(title: "", message: "不好意思，这个功能后期版本再添加", delegate: self, cancelButtonTitle: "ok")
+        alert.show()
     }
     
     func dismissCell(sender:UIButton){
-        println("Button pressed target action: dismiss selected cell")
+        print("Button pressed target action: dismiss selected cell")
         self.zoomFromSelectedImage(self.zoomFrame)
         
     }
@@ -384,7 +404,7 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
             }, completion: {
                 finished in
                 zoomImage?.removeFromSuperview()
-                let cv = self.view.viewWithTag(301) as UICollectionView
+                let cv = self.view.viewWithTag(301) as! UICollectionView
                 cv.hidden = false
                 let backButton = self.view.viewWithTag(304)
                 backButton?.removeFromSuperview()
@@ -417,7 +437,7 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
         
         wxImageObject.imageData = UIImagePNGRepresentation(image)
         
-        println(thumbData.length/1024)
+        print(thumbData!.length/1024)
         messgage.mediaObject = wxImageObject
         messgage.mediaTagName = "test"
         messgage.messageExt = "测试"
@@ -432,7 +452,7 @@ class MomentsCollectionViewController:UICollectionViewController,UICollectionVie
     
     //发送信息给用户
     func sendText(){
-        var req = SendMessageToWXReq()
+        let req = SendMessageToWXReq()
         req.text = "test to send message to a friend"
         req.scene = 1
         req.bText = true

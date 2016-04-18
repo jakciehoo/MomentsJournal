@@ -68,7 +68,7 @@ class TextEffectsViewController: UIViewController,UIGestureRecognizerDelegate {
             fontButton.titleLabel?.font = UIFont(name: self.fonts[i], size: 25.0)
             fontButton.addTarget(self, action: "chooseFont:", forControlEvents: .TouchUpInside)
             self.fontScrollView.addSubview(fontButton)
-            println("Create and add \(fonts[i]) button success")
+            print("Create and add \(fonts[i]) button success")
         }
         for i in 0..<self.colors.count{
             let colorButton = UIButton(frame: CGRect(x: 50*i + 4*i,y: 0, width: 50, height: 50))
@@ -79,18 +79,18 @@ class TextEffectsViewController: UIViewController,UIGestureRecognizerDelegate {
             colorButton.backgroundColor = self.colors[i]
             colorButton.addTarget(self, action: "chooseColor:", forControlEvents: .TouchUpInside)
             self.colorScrollView.addSubview(colorButton)
-            println("Create and add color button success")
+            print("Create and add color button success")
         }
     }
     //MARK: - Button Target Actions
     func chooseFont(sender:UIButton){
-        println("Button pressed target action: chose font")
+        print("Button pressed target action: chose font")
         let chosenFontIndex = sender.tag - 100
         self.momentTextLabel.font = UIFont(name: self.fonts[chosenFontIndex], size: 27.0)
         self.momentTextLabel.sizeToFit()
     }
     func chooseColor(sender:UIButton){
-        println("Button pressed target action chose color")
+        print("Button pressed target action chose color")
         let chosenColorIndex = sender.tag - 200
         self.momentTextLabel.textColor = self.colors[chosenColorIndex]
     }
@@ -116,10 +116,10 @@ class TextEffectsViewController: UIViewController,UIGestureRecognizerDelegate {
    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if(segue.identifier == "submitMoment"){
-            println("Performing submitMoment segue")
+            print("Performing submitMoment segue")
             let imagewithText = self.takeScreenshot(self.ContainerView)
             self.moment.image = imagewithText
-            let mvc = segue.destinationViewController as MomentsCollectionViewController
+            let mvc = segue.destinationViewController as! MomentsCollectionViewController
             //mvc.moment = self.moment
             //let mvc = segue.destinationViewController as MomentsTableViewController
             mvc.moment = self.moment
@@ -129,18 +129,18 @@ class TextEffectsViewController: UIViewController,UIGestureRecognizerDelegate {
     //MARK - Gesture Recognize Delegate
     //add rotation ,pan ,pinch gesture to moment text
     func addGestureRecognizersToPiece(piece:UIView){
-        println("Adding rotation gesture recognizers to moment text")
+        print("Adding rotation gesture recognizers to moment text")
         let rotationGesture = UIRotationGestureRecognizer(target: self, action: "rotatePiece:")
         rotationGesture.delegate = self
         piece.superview!.addGestureRecognizer(rotationGesture)
         
-        println("Adding pan gesture recognizers to moment text")
+        print("Adding pan gesture recognizers to moment text")
         let panGesture = UIPanGestureRecognizer(target: self, action: "panPiece:")
         panGesture.maximumNumberOfTouches = 2
         panGesture.delegate = self
         piece.addGestureRecognizer(panGesture)
         
-        println("Adding pinch gesture recognizers to view")
+        print("Adding pinch gesture recognizers to view")
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: "pinchPiece:")
         pinchGesture.delegate = self
         piece.superview!.addGestureRecognizer(pinchGesture)

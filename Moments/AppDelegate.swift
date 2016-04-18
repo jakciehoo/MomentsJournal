@@ -9,16 +9,29 @@
 import UIKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate,WXApiDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        if WXApi.registerApp("wx98ca11ad382ab0dc"){
-            println("注册成功")
-        }
+//        if WXApi.registerApp("wx98ca11ad382ab0dc"){
+//            println("注册成功")
+//        }
+        ShareSDK.registerApp("6d8f1cc422a8")
+        //ShareSDK.connectSinaWeiboWithAppKey(u, appSecret: <#String!#>, redirectUri: <#String!#>)
+        ShareSDK.connectWeChatWithAppId("wx98ca11ad382ab0dc", wechatCls: WXApi.self)
+        ShareSDK.connectWeChatWithAppId("wx98ca11ad382ab0dc", appSecret: "02dde7fe03c91c8b05a1b20ca1214f8d", wechatCls: WXApi.self)
+        
+        //连接短信分享
+        ShareSDK.connectSMS();
+        //连接邮件
+        ShareSDK.connectMail();
+        //连接打印
+        ShareSDK.connectAirPrint();
+        //连接拷贝
+        ShareSDK.connectCopy();
 
        let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setValue("Jackie Hoo", forKey: "Developer")
@@ -26,20 +39,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate,WXApiDelegate {
         defaults.setValue(NSDate(), forKey: "Initial Launch")
         if let launchNumber = defaults.objectForKey("LaunchNumber") as? Int {
             defaults.setValue(launchNumber + 1, forKey: "LaunchNumber")
-            println(launchNumber)
+            print(launchNumber)
         }else{
             defaults.setValue(1, forKey: "LaunchNumber")
             
         }
         defaults.synchronize()
 
-        let launchNumberNow = defaults.objectForKey("LaunchNumber") as Int
+        let launchNumberNow = defaults.objectForKey("LaunchNumber") as! Int
         if launchNumberNow == 5 {
             let alert = UIAlertView(title: "Like us?", message: "Please Rate us in the app store!", delegate: nil, cancelButtonTitle: "OK")
             alert.show()
             
         }
-        if let lastIntro: AnyObject = defaults.objectForKey(AppDefaultKeys.IntroVersionSeen.rawValue) {
+        if let _: AnyObject = defaults.objectForKey(AppDefaultKeys.IntroVersionSeen.rawValue) {
             setupAppViewController(false)
         } else {
             self.window!.rootViewController = createIntroViewController()
@@ -120,10 +133,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate,WXApiDelegate {
     }
     func setupAppViewController(animated : Bool) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let appViewController = storyboard.instantiateViewControllerWithIdentifier("mainViewController") as UITabBarController
+        let appViewController = storyboard.instantiateViewControllerWithIdentifier("mainViewController") as! UITabBarController
         //appViewController.tabBar.backgroundColor = UIColor.blackColor()
         if  let defaultMoment = NSUserDefaults.standardUserDefaults().objectForKey("moments") as? NSArray{
-                    let mcvc = appViewController.viewControllers![1] as MomentsCollectionViewController
+                    let mcvc = appViewController.viewControllers![1] as! MomentsCollectionViewController
                     mcvc.tabBarItem.badgeValue = "\(defaultMoment.count)"
                 }
                 if animated {
@@ -139,20 +152,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate,WXApiDelegate {
     
     
     func application(application: UIApplication, handleOpenURL url: NSURL) -> Bool {
-        return WXApi.handleOpenURL(url, delegate: self)
+        //return WXApi.handleOpenURL(url, delegate: self)
+        return ShareSDK.handleOpenURL(url, wxDelegate: self)
     }
     
-    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
-        return WXApi.handleOpenURL(url, delegate: self)
+    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+        //return WXApi.handleOpenURL(url, delegate: self)
+        return ShareSDK.handleOpenURL(url, sourceApplication: sourceApplication, annotation: annotation, wxDelegate: self)
     }
     
-    func onReq(req: BaseReq!) {
-        
-    }
-    
-    func onResp(resp: BaseResp!) {
-        
-    }
+//    func onReq(req: BaseReq!) {
+//        
+//    }
+//    
+//    func onResp(resp: BaseResp!) {
+//        
+//    }
 
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

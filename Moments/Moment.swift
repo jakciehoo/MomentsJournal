@@ -31,10 +31,10 @@ class Moment:NSObject,NSCoding {
         aCoder.encodeObject(self.date, forKey: "date")
         aCoder.encodeObject(self.image, forKey: "image")
     }
-    required init(coder aDecoder: NSCoder){
-        self.text = aDecoder.decodeObjectForKey("text") as String
-        self.date = aDecoder.decodeObjectForKey("date") as String
-        self.image = aDecoder.decodeObjectForKey("image") as UIImage
+    required init?(coder aDecoder: NSCoder){
+        self.text = aDecoder.decodeObjectForKey("text") as! String
+        self.date = aDecoder.decodeObjectForKey("date") as! String
+        self.image = aDecoder.decodeObjectForKey("image") as! UIImage
         super.init()
     }
 
